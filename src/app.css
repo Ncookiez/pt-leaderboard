@@ -99,3 +99,9 @@ input {
   background-color: var(--pt-purple-50);
   color: var(--pt-purple-900);
 }
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
