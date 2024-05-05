@@ -1,4 +1,4 @@
-import { USER_DATA_API_URL, networks } from '$lib/config'
+import { userDataApiUrl, networks } from '$lib/config'
 import type { ApiResponse } from '$lib/types'
 import type { PageLoad } from './$types'
 
@@ -8,8 +8,8 @@ export const load: PageLoad = async ({ fetch }) => {
   await Promise.allSettled(
     networks.map((network) =>
       (async () => {
-        const _current = await fetch(`${USER_DATA_API_URL}/${network}`)
-        const _old = await fetch(`${USER_DATA_API_URL}/${network}/old`)
+        const _current = await fetch(`${userDataApiUrl}/${network}`)
+        const _old = await fetch(`${userDataApiUrl}/${network}/old`)
 
         const current: ApiResponse = await _current.json()
         const old: ApiResponse = await _old.json()

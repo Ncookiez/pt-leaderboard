@@ -55,7 +55,7 @@
 
 <section>
   <h1>Points Leaderboard</h1>
-  <span class="timestamp">Last Updated: {formattedHoursAgo}</span>
+  <span id="timestamp">Last Updated: {formattedHoursAgo}</span>
   <div id="table">
     <div id="headers" class="grid">
       <span class="rank">Rank</span>
@@ -114,7 +114,7 @@
     font-size: 3rem;
   }
 
-  span.timestamp {
+  #timestamp {
     color: var(--pt-purple-300);
   }
 

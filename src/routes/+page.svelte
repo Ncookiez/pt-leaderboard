@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { defaultMetaDescription, defaultMetaTitle } from '$lib/config'
   import Leaderboard from '$lib/Leaderboard.svelte'
   import type { PageData } from './$types'
 
@@ -6,11 +7,8 @@
 </script>
 
 <svelte:head>
-  <title>PoolTogether Leaderboard</title>
-  <meta
-    name="description"
-    content="Lure them in with points, and they won't realize they're saving money responsibly."
-  />
+  <title>{defaultMetaTitle}</title>
+  <meta name="description" content={defaultMetaDescription} />
 </svelte:head>
 
 <Leaderboard data={data[10].current} oldData={data[10].old} />
