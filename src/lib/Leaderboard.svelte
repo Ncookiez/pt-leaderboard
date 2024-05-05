@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { getTime } from './utils'
+  import { onMount } from 'svelte'
   import type { Address, ApiResponse } from './types'
 
   type Users = [Lowercase<Address>, number][]
 
   export let data: ApiResponse
   export let oldData: ApiResponse
+  let timeNow = getTime()
 
   $: users = Object.entries(data.data) as Users
   $: oldUsers = Object.entries(oldData.data) as Users
@@ -12,8 +15,15 @@
   $: sortedUsers = users.sort((a, b) => b[1] - a[1])
   $: oldSortedUsers = oldUsers.sort((a, b) => b[1] - a[1])
 
-  // TODO: change this to "X hours ago"
-  $: lastUpdated = data.metadata.lastUpdated
+  $: lastUpdatedTime = getTime(data.metadata.lastUpdated)
+  $: updatedMinutesAgo = Math.floor((timeNow - lastUpdatedTime) / 60)
+  $: updatedHoursAgo = Math.floor(updatedMinutesAgo / 60)
+  $: formattedHoursAgo =
+    updatedMinutesAgo > 5
+      ? updatedHoursAgo > 1
+        ? `${updatedHoursAgo} hours ago`
+        : 'Less than an hour ago'
+      : 'Just now'
 
   const getRanks = (_sortedUsers: Users) => {
     const ranks: { [user: Lowercase<Address>]: number } = {}
@@ -24,6 +34,17 @@
   }
 
   $: oldRanks = getRanks(oldSortedUsers)
+
+  onMount(() => {
+    const interval = setInterval(
+      () => {
+        timeNow = getTime()
+      },
+      5 * 60 * 1_000
+    )
+
+    return () => clearInterval(interval)
+  })
 </script>
 
 <!-- TODO: ens name resolution -->
@@ -34,7 +55,7 @@
 
 <section>
   <h1>Leaderboard</h1>
-  <span>Last Updated: {lastUpdated}</span>
+  <span>Last Updated: {formattedHoursAgo}</span>
   <div id="table">
     <div id="headers">
       <span>Rank</span>
