@@ -1,6 +1,6 @@
 {
-  "name": "pooltogether-sveltekit-template",
-  "version": "0.1.1",
+  "name": "pt-leaderboard",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,11 +9,6 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
-  },
-  "dependencies": {
-    "@generationsoftware/hyperstructure-client-js": "^1.12.2",
-    "@wagmi/core": "^2.6.5",
-    "viem": "^2.7.8"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.1",

@@ -1,29 +1,16 @@
 <script lang="ts">
-  import { VAULT_LIST } from '$lib/config'
-  import Vault from '$lib/Vault/index.svelte'
-  import GrandPrize from '$lib/GrandPrize.svelte'
+  import Leaderboard from '$lib/Leaderboard.svelte'
+  import type { PageData } from './$types'
+
+  export let data: PageData
 </script>
 
 <svelte:head>
-  <title>PoolTogether App Template</title>
+  <title>PoolTogether Leaderboard</title>
   <meta
     name="description"
-    content="This is a minimal template for a static SvelteKit app that interacts with the PoolTogether protocol"
+    content="Lure them in with points, and they won't realize they're saving money responsibly."
   />
 </svelte:head>
 
-<GrandPrize />
-
-<div id="vaults">
-  {#each VAULT_LIST.tokens as vaultInfo}
-    <Vault {vaultInfo} />
-  {/each}
-</div>
-
-<style>
-  #vaults {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-</style>
+<Leaderboard data={data[10].current} oldData={data[10].old} />

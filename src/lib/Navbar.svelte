@@ -1,11 +1,6 @@
-<script>
-  import ConnectButton from './ConnectButton.svelte'
-</script>
-
 <nav>
   <div>
     <img src="pooltogetherLogo.svg" alt="PoolTogether Logo" />
-    <ConnectButton />
   </div>
 </nav>
 
