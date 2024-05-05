@@ -47,6 +47,7 @@
   })
 </script>
 
+<!-- TODO: somehow show points gained since last update -->
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
@@ -153,6 +154,10 @@
     background-color: var(--pt-purple-500);
     border: 2px solid var(--pt-purple-700);
     border-radius: 0.5rem;
+  }
+
+  #podium {
+    font-size: 1.1em;
   }
 
   div.row {

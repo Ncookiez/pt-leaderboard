@@ -1,10 +1,28 @@
+<script lang="ts">
+  import { page } from '$app/stores'
+
+  $: route = $page.route.id
+
+  const navLinks: { href: string; name: string }[] = [
+    { href: '/', name: 'Points' },
+    { href: '/about', name: 'About' }
+  ]
+</script>
+
 <nav>
   <div>
     <img src="pooltogetherLogo.svg" alt="PoolTogether Logo" />
+    <div id="nav-links">
+      {#each navLinks as { href, name }}
+        <a {href} class:active={route === href}>{name}</a>
+      {/each}
+    </div>
+    <a href="https://pooltogether.com/interfaces" target="_blank" id="pt-button">
+      Use PoolTogether
+    </a>
   </div>
 </nav>
 
-<!-- TODO: add links to pt interfaces, docs, etc. -->
 <!-- TODO: add address/ens search functionality for whatever leaderboard is being displayed -->
 
 <style>
@@ -24,5 +42,43 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  nav > div > img {
+    max-height: 48px;
+  }
+
+  #nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  #nav-links > a {
+    padding-bottom: 2px;
+    font-size: 1.1em;
+    font-weight: 500;
+  }
+
+  #nav-links > a.active {
+    color: var(--pt-teal-light);
+  }
+
+  #nav-links > a:not(.active):hover {
+    color: var(--pt-purple-300);
+  }
+
+  #pt-button {
+    padding: 0.75rem 1rem;
+    color: var(--pt-purple-800);
+    background-color: var(--pt-teal-light);
+    font-size: 0.9em;
+    font-weight: 500;
+    border: 1px solid var(--pt-teal-light);
+    border-radius: 0.5rem;
+  }
+
+  #pt-button:hover {
+    background-color: var(--pt-teal-dark);
   }
 </style>
