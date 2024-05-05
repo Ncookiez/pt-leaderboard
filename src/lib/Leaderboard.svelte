@@ -50,26 +50,46 @@
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
-<!-- TODO: special row styling for podium -->
 <!-- TODO: some sort of infinite scroll after clicking view more or something? -->
 
 <section>
-  <h1>Leaderboard</h1>
-  <span>Last Updated: {formattedHoursAgo}</span>
+  <h1>Points Leaderboard</h1>
+  <span class="timestamp">Last Updated: {formattedHoursAgo}</span>
   <div id="table">
-    <div id="headers">
-      <span>Rank</span>
-      <span>User</span>
-      <span>Points</span>
+    <div id="headers" class="grid">
+      <span class="rank">Rank</span>
+      <span class="user">User</span>
+      <span class="points">Points</span>
     </div>
-    <div id="rows">
-      {#each sortedUsers as [userAddress, points], i}
+    <div id="podium" class="rows">
+      {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
         {@const rank = i + 1}
         {@const oldRank = oldRanks[userAddress]}
-        <div id="row">
-          <span>#{rank}</span>
-          <span>{userAddress}</span>
-          <span>{points.toLocaleString('en')}</span>
+        <div
+          class="row grid"
+          class:gold={rank === 1}
+          class:silver={rank === 2}
+          class:bronze={rank === 3}
+        >
+          <span class="rank">#{rank}</span>
+          <span class="user">{userAddress}</span>
+          <span class="points">{points.toLocaleString('en')}</span>
+          {#if !oldRank || rank < oldRank}
+            <i class="icofont-rounded-up" />
+          {:else if rank > oldRank}
+            <i class="icofont-rounded-down" />
+          {/if}
+        </div>
+      {/each}
+    </div>
+    <div class="rows">
+      {#each sortedUsers.slice(3) as [userAddress, points], i}
+        {@const rank = i + 4}
+        {@const oldRank = oldRanks[userAddress]}
+        <div class="row grid">
+          <span class="rank">#{rank}</span>
+          <span class="user">{userAddress}</span>
+          <span class="points">{points.toLocaleString('en')}</span>
           {#if !oldRank || rank < oldRank}
             <i class="icofont-rounded-up" />
           {:else if rank > oldRank}
@@ -83,32 +103,95 @@
 
 <style>
   section {
+    width: 100%;
+    max-width: 768px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  span.timestamp {
+    color: var(--pt-purple-300);
   }
 
   #table {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    --table-x-padding: 1rem;
+  }
+
+  #table .grid {
+    display: grid;
+    grid-template-columns: 1fr 6fr 2fr;
     gap: 1rem;
-    --grid-cols: 1fr 7fr 1.5fr 1fr;
   }
 
   #headers {
-    display: grid;
-    grid-template-columns: var(--grid-cols);
+    padding: 0 var(--table-x-padding);
+    font-size: 1.1rem;
+    font-weight: 600;
   }
 
-  #rows {
+  #headers > span.points {
+    text-align: right;
+  }
+
+  div.rows {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
-  #row {
-    display: grid;
-    grid-template-columns: var(--grid-cols);
+  div.rows:not(#podium) {
+    gap: 0.75rem;
+    padding: 0.5rem var(--table-x-padding);
+    background-color: var(--pt-purple-500);
+    border: 2px solid var(--pt-purple-700);
+    border-radius: 0.5rem;
+  }
+
+  div.row {
+    position: relative;
+  }
+
+  div.row > span.points {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  div.row.gold,
+  div.row.silver,
+  div.row.bronze {
+    padding: 0.5rem var(--table-x-padding);
+    border: 4px solid;
+    border-radius: 0.5rem;
+  }
+
+  div.row.gold {
+    background-color: hsl(51, 100%, 30%);
+    border-color: gold;
+  }
+
+  div.row.silver {
+    background-color: hsl(0, 0%, 55%);
+    border-color: silver;
+  }
+
+  div.row.bronze {
+    background-color: hsl(30, 61%, 30%);
+    border-color: #cd7f32;
+  }
+
+  .icofont-rounded-up,
+  .icofont-rounded-down {
+    position: absolute;
+    right: calc(100% + (2 * var(--table-x-padding)));
+    font-size: 1.5em;
   }
 
   .icofont-rounded-up {

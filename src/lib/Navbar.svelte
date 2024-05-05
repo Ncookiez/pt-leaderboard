@@ -5,6 +5,7 @@
 </nav>
 
 <!-- TODO: add links to pt interfaces, docs, etc. -->
+<!-- TODO: add address/ens search functionality for whatever leaderboard is being displayed -->
 
 <style>
   nav {

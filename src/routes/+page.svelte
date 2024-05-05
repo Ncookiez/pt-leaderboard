@@ -13,7 +13,6 @@
   />
 </svelte:head>
 
-<!-- TODO: add explanation of how this is calculated (twab, not balance, etc.) -->
-<!-- TODO: use <i class="icofont-question-circle" /> -->
-
 <Leaderboard data={data[10].current} oldData={data[10].old} />
+
+<!-- TODO: add more leaderboards (prizes won, for example) -->
