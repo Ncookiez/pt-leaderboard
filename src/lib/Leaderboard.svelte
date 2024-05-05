@@ -12,6 +12,7 @@
   $: sortedUsers = users.sort((a, b) => b[1] - a[1])
   $: oldSortedUsers = oldUsers.sort((a, b) => b[1] - a[1])
 
+  // TODO: change this to "X hours ago"
   $: lastUpdated = data.metadata.lastUpdated
 
   const getRanks = (_sortedUsers: Users) => {
