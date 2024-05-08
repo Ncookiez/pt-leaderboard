@@ -1,8 +1,4 @@
-<script lang="ts">
-  export let height: string = '30px'
-</script>
-
-<svg {height} viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+<svg viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="#fff">
   <circle cx="15" cy="15" r="15">
     <animate
       attributeName="r"
@@ -74,5 +70,7 @@
 <style>
   svg {
     width: auto;
+    height: var(--height, 16px);
+    margin: var(--margin, 0);
   }
 </style>

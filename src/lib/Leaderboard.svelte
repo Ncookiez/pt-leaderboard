@@ -1,21 +1,29 @@
 <script lang="ts">
   import { getTime } from './utils'
   import { onMount } from 'svelte'
-  import type { Address, ApiResponse } from './types'
+  import type { Address } from './types'
+  import { userOdds } from './stores'
+  import Loading from './Loading.svelte'
 
   type Users = [Lowercase<Address>, number][]
 
-  export let data: ApiResponse
-  export let oldData: ApiResponse
+  export let network: number
   let timeNow = getTime()
 
-  $: users = Object.entries(data.data) as Users
-  $: oldUsers = Object.entries(oldData.data) as Users
+  $: data = $userOdds?.[network]?.current.data
+  $: metadata = $userOdds?.[network]?.current.metadata
+  $: oldData = $userOdds?.[network]?.old.data
 
-  $: sortedUsers = users.sort((a, b) => b[1] - a[1])
-  $: oldSortedUsers = oldUsers.sort((a, b) => b[1] - a[1])
+  $: rawUsers = !!data ? Object.entries(data) : []
+  $: oldRawUsers = !!oldData ? Object.entries(oldData) : []
 
-  $: lastUpdatedTime = getTime(data.metadata.lastUpdated)
+  $: formattedUsers = rawUsers.map((data) => [data[0], Math.floor(data[1] * 1e6)]) as Users
+  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], Math.floor(data[1] * 1e6)]) as Users
+
+  $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1])
+  $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1])
+
+  $: lastUpdatedTime = !!metadata ? getTime(metadata.lastUpdated) : 0
   $: updatedMinutesAgo = Math.floor((timeNow - lastUpdatedTime) / 60)
   $: updatedHoursAgo = Math.floor(updatedMinutesAgo / 60)
   $: formattedHoursAgo =
@@ -55,51 +63,61 @@
 
 <section>
   <h1>Points Leaderboard</h1>
-  <span id="timestamp">Last Updated: {formattedHoursAgo}</span>
-  <div id="table">
-    <div id="headers" class="grid">
-      <span class="rank">Rank</span>
-      <span class="user">User</span>
-      <span class="points">Points</span>
-    </div>
-    <div id="podium" class="rows">
-      {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
-        {@const rank = i + 1}
-        {@const oldRank = oldRanks[userAddress]}
-        <div
-          class="row grid"
-          class:gold={rank === 1}
-          class:silver={rank === 2}
-          class:bronze={rank === 3}
-        >
-          <span class="rank">#{rank}</span>
-          <span class="user">{userAddress}</span>
-          <span class="points">{points.toLocaleString('en')}</span>
-          {#if !oldRank || rank < oldRank}
-            <i class="icofont-rounded-up" />
-          {:else if rank > oldRank}
-            <i class="icofont-rounded-down" />
+  {#if !!data}
+    <span id="timestamp">Last Updated: {formattedHoursAgo}</span>
+    <div id="table">
+      <div id="headers" class="grid">
+        <span class="rank">Rank</span>
+        <span class="user">User</span>
+        <span class="points">Points</span>
+      </div>
+      <div id="podium" class="rows">
+        {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
+          {@const rank = i + 1}
+          {@const oldRank = oldRanks[userAddress]}
+          <div
+            class="row grid"
+            class:gold={rank === 1}
+            class:silver={rank === 2}
+            class:bronze={rank === 3}
+          >
+            <span class="rank">#{rank}</span>
+            <span class="user">{userAddress}</span>
+            <span class="points">{points.toLocaleString('en')}</span>
+            {#if !!oldData}
+              {#if !oldRank || rank < oldRank}
+                <i class="icofont-rounded-up" />
+              {:else if rank > oldRank}
+                <i class="icofont-rounded-down" />
+              {/if}
+            {/if}
+          </div>
+        {/each}
+      </div>
+      <div class="rows">
+        {#each sortedUsers.slice(3) as [userAddress, points], i}
+          {#if points > 0}
+            {@const rank = i + 4}
+            {@const oldRank = oldRanks[userAddress]}
+            <div class="row grid">
+              <span class="rank">#{rank}</span>
+              <span class="user">{userAddress}</span>
+              <span class="points">{points.toLocaleString('en')}</span>
+              {#if !!oldData}
+                {#if !oldRank || rank < oldRank}
+                  <i class="icofont-rounded-up" />
+                {:else if rank > oldRank}
+                  <i class="icofont-rounded-down" />
+                {/if}
+              {/if}
+            </div>
           {/if}
-        </div>
-      {/each}
+        {/each}
+      </div>
     </div>
-    <div class="rows">
-      {#each sortedUsers.slice(3) as [userAddress, points], i}
-        {@const rank = i + 4}
-        {@const oldRank = oldRanks[userAddress]}
-        <div class="row grid">
-          <span class="rank">#{rank}</span>
-          <span class="user">{userAddress}</span>
-          <span class="points">{points.toLocaleString('en')}</span>
-          {#if !oldRank || rank < oldRank}
-            <i class="icofont-rounded-up" />
-          {:else if rank > oldRank}
-            <i class="icofont-rounded-down" />
-          {/if}
-        </div>
-      {/each}
-    </div>
-  </div>
+  {:else}
+    <Loading --margin="2rem 0" />
+  {/if}
 </section>
 
 <style>

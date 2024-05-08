@@ -1,6 +1,15 @@
-<script>
+<script lang="ts">
+  import { getUserOdds } from '$lib/utils'
   import Navbar from '$lib/Navbar.svelte'
+  import { userOdds } from '$lib/stores'
+  import { onMount } from 'svelte'
   import '../app.css'
+
+  onMount(async () => {
+    if (!$userOdds) {
+      userOdds.set(await getUserOdds())
+    }
+  })
 </script>
 
 <Navbar />

@@ -8,11 +8,12 @@
     </p>
     <p>
       These points are calculated by calculating user percentages of <a
-        href="https://dev.pooltogether.com/protocol/design/twab-controller">prize vault TWABs</a
+        href="https://dev.pooltogether.com/protocol/design/twab-controller"
+        target="_blank">prize vault TWABs</a
       >, and each vault's percentage contribution to the PoolTogether prize pool. This means they
       are not necessarily reflections of one's deposit size in the protocol, but their chances to
-      win. A user with a longer-lasting deposit can have better odds than another user with a larger
-      deposit.
+      win. A user with a longer-lasting or higher yield deposit can have better odds than another
+      user with a larger deposit.
     </p>
     <p>This data is currently updated every 24 hours.</p>
   </div>
