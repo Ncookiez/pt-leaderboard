@@ -1,4 +1,5 @@
 <script lang="ts">
+  import LeaderboardRankUpdate from './LeaderboardRankUpdate.svelte'
   import LeaderboardPoints from './LeaderboardPoints.svelte'
   import Loading from './Loading.svelte'
   import { userOdds } from './stores'
@@ -91,11 +92,7 @@
             <span class="user">{userAddress}</span>
             <LeaderboardPoints {points} {oldPoints} />
             {#if !!oldData}
-              {#if !oldRank || rank < oldRank}
-                <i class="icofont-rounded-up" />
-              {:else if rank > oldRank}
-                <i class="icofont-rounded-down" />
-              {/if}
+              <LeaderboardRankUpdate {rank} {oldRank} />
             {/if}
           </div>
         {/each}
@@ -111,11 +108,7 @@
               <span class="user">{userAddress}</span>
               <LeaderboardPoints {points} {oldPoints} />
               {#if !!oldData}
-                {#if !oldRank || rank < oldRank}
-                  <i class="icofont-rounded-up" />
-                {:else if rank > oldRank}
-                  <i class="icofont-rounded-down" />
-                {/if}
+                <LeaderboardRankUpdate {rank} {oldRank} />
               {/if}
             </div>
           {/if}
@@ -213,21 +206,6 @@
   div.row.bronze {
     background-color: hsl(30, 61%, 30%);
     border-color: #cd7f32;
-  }
-
-  .icofont-rounded-up,
-  .icofont-rounded-down {
-    position: absolute;
-    right: calc(100% + (2 * var(--table-x-padding)));
-    font-size: 1.5em;
-  }
-
-  .icofont-rounded-up {
-    color: var(--pt-teal-dark);
-  }
-
-  .icofont-rounded-down {
-    color: var(--pt-warning-dark);
   }
 
   button#show-more {
