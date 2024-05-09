@@ -1,6 +1,7 @@
 <script lang="ts">
   import LeaderboardRankUpdate from './LeaderboardRankUpdate.svelte'
   import LeaderboardPoints from './LeaderboardPoints.svelte'
+  import LeaderboardUser from './LeaderboardUser.svelte'
   import Loading from './Loading.svelte'
   import { userOdds } from './stores'
   import { getTime } from './utils'
@@ -62,7 +63,6 @@
   })
 </script>
 
-<!-- TODO: on click, go to cabana account page -->
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
@@ -89,7 +89,7 @@
             class:bronze={rank === 3}
           >
             <span class="rank">#{rank}</span>
-            <span class="user">{userAddress}</span>
+            <LeaderboardUser {userAddress} />
             <LeaderboardPoints {points} {oldPoints} />
             {#if !!oldData}
               <LeaderboardRankUpdate {rank} {oldRank} />
@@ -105,7 +105,7 @@
             {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
             <div class="row grid">
               <span class="rank">#{rank}</span>
-              <span class="user">{userAddress}</span>
+              <LeaderboardUser {userAddress} />
               <LeaderboardPoints {points} {oldPoints} />
               {#if !!oldData}
                 <LeaderboardRankUpdate {rank} {oldRank} />
@@ -179,10 +179,6 @@
 
   div.row {
     position: relative;
-  }
-
-  div.row > span.user {
-    font-family: monospace, monospace;
   }
 
   div.row.gold,
