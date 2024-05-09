@@ -1,5 +1,6 @@
 <script lang="ts">
   import { defaultMetaDescription, defaultMetaTitle } from '$lib/config'
+  import ScrollUpPrompt from '$lib/ScrollUpPrompt.svelte'
   import Leaderboard from '$lib/Leaderboard.svelte'
 </script>
 
@@ -8,7 +9,7 @@
   <meta name="description" content={defaultMetaDescription} />
 </svelte:head>
 
-<Leaderboard network={10} />
-
-<!-- TODO: if lower that a screen height, show icon to scroll back up -->
 <!-- TODO: add more leaderboards (prizes won, for example) -->
+
+<Leaderboard network={10} />
+<ScrollUpPrompt />
