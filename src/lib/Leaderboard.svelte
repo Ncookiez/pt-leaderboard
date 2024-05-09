@@ -9,6 +9,7 @@
 
   export let network: number
   let timeNow = getTime()
+  let shownUsers = 20
 
   $: data = $userOdds?.[network]?.current.data
   $: metadata = $userOdds?.[network]?.current.metadata
@@ -55,11 +56,11 @@
   })
 </script>
 
+<!-- TODO: on click, go to cabana account page -->
 <!-- TODO: somehow show points gained since last update (on hover show +500, etc.) -->
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
-<!-- TODO: some sort of infinite scroll after clicking view more or something? -->
 
 <section>
   <h1>Points Leaderboard</h1>
@@ -95,7 +96,7 @@
         {/each}
       </div>
       <div class="rows">
-        {#each sortedUsers.slice(3) as [userAddress, points], i}
+        {#each sortedUsers.slice(3, shownUsers) as [userAddress, points], i}
           {#if points > 0}
             {@const rank = i + 4}
             {@const oldRank = oldRanks[userAddress]}
@@ -113,6 +114,9 @@
             </div>
           {/if}
         {/each}
+        {#if shownUsers < sortedUsers.length}
+          <button id="show-more" on:click={() => (shownUsers += 20)}>show more</button>
+        {/if}
       </div>
     </div>
   {:else}
@@ -223,5 +227,14 @@
 
   .icofont-rounded-down {
     color: var(--pt-warning-dark);
+  }
+
+  button#show-more {
+    margin-top: 0.5rem;
+    color: var(--pt-purple-50);
+  }
+
+  button#show-more:hover {
+    color: var(--pt-purple-100);
   }
 </style>
