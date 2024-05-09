@@ -3,10 +3,11 @@
   import LeaderboardPoints from './LeaderboardPoints.svelte'
   import LeaderboardUser from './LeaderboardUser.svelte'
   import Loading from './Loading.svelte'
-  import { userOdds } from './stores'
+  import { searchInput, userOdds } from './stores'
   import { getTime } from './utils'
   import { onMount } from 'svelte'
   import type { Address } from './types'
+  import Search from './Search.svelte'
 
   type Users = [Lowercase<Address>, number][]
 
@@ -51,6 +52,14 @@
 
   $: oldRanks = getRanks(oldSortedUsers)
 
+  $: userSearch = $searchInput.trim().toLowerCase()
+  $: searchResults = sortedUsers
+    .map(([u], i) => ({ u, r: i + 1 }))
+    .filter(({ u }) => u.includes(userSearch))
+  $: maxRankSearchResults = !!searchResults.length
+    ? searchResults[searchResults.length - 1].r
+    : undefined
+
   onMount(() => {
     const interval = setInterval(
       () => {
@@ -68,7 +77,12 @@
 <!-- TODO: fallback blocky avatars -->
 
 <section>
-  <h1>Points Leaderboard</h1>
+  <div id="top-header">
+    <h1>Points Leaderboard</h1>
+    {#if !!data}
+      <Search />
+    {/if}
+  </div>
   {#if !!data}
     <span id="timestamp">Last Updated: {formattedHoursAgo}</span>
     <div id="table">
@@ -79,31 +93,16 @@
       </div>
       <div id="podium" class="rows">
         {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
-          {@const rank = i + 1}
-          {@const oldRank = oldRanks[userAddress]}
-          {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
-          <div
-            class="row grid"
-            class:gold={rank === 1}
-            class:silver={rank === 2}
-            class:bronze={rank === 3}
-          >
-            <span class="rank">#{rank}</span>
-            <LeaderboardUser {userAddress} />
-            <LeaderboardPoints {points} {oldPoints} />
-            {#if !!oldData}
-              <LeaderboardRankUpdate {rank} {oldRank} />
-            {/if}
-          </div>
-        {/each}
-      </div>
-      <div class="rows">
-        {#each sortedUsers.slice(3, shownUsers) as [userAddress, points], i}
-          {#if points > 0}
-            {@const rank = i + 4}
+          {#if !userSearch || userAddress.includes(userSearch)}
+            {@const rank = i + 1}
             {@const oldRank = oldRanks[userAddress]}
             {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
-            <div class="row grid">
+            <div
+              class="row grid"
+              class:gold={rank === 1}
+              class:silver={rank === 2}
+              class:bronze={rank === 3}
+            >
               <span class="rank">#{rank}</span>
               <LeaderboardUser {userAddress} />
               <LeaderboardPoints {points} {oldPoints} />
@@ -113,10 +112,34 @@
             </div>
           {/if}
         {/each}
-        {#if shownUsers < sortedUsers.length}
-          <button id="show-more" on:click={() => (shownUsers += 20)}>show more</button>
-        {/if}
       </div>
+      {#if !userSearch || !maxRankSearchResults || maxRankSearchResults >= 3}
+        <div class="rows">
+          {#each sortedUsers.slice(3, !!userSearch ? maxRankSearchResults : shownUsers) as [userAddress, points], i}
+            {#if !userSearch || userAddress.includes(userSearch)}
+              {#if points > 0}
+                {@const rank = i + 4}
+                {@const oldRank = oldRanks[userAddress]}
+                {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
+                <div class="row grid">
+                  <span class="rank">#{rank}</span>
+                  <LeaderboardUser {userAddress} />
+                  <LeaderboardPoints {points} {oldPoints} />
+                  {#if !!oldData}
+                    <LeaderboardRankUpdate {rank} {oldRank} />
+                  {/if}
+                </div>
+              {/if}
+            {/if}
+          {/each}
+          {#if !userSearch && shownUsers < sortedUsers.length}
+            <button id="show-more" on:click={() => (shownUsers += 20)}>show more</button>
+          {/if}
+          {#if !!userSearch && !maxRankSearchResults}
+            <span id="failed-search">no users found based on your search</span>
+          {/if}
+        </div>
+      {/if}
     </div>
   {:else}
     <Loading --margin="2rem 0" />
@@ -129,6 +152,12 @@
     max-width: 768px;
     display: flex;
     flex-direction: column;
+  }
+
+  #top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   h1 {
@@ -211,5 +240,10 @@
 
   button#show-more:hover {
     color: var(--pt-purple-100);
+  }
+
+  span#failed-search {
+    text-align: center;
+    font-size: 0.9em;
   }
 </style>
