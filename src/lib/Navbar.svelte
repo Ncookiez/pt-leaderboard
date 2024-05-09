@@ -20,8 +20,6 @@
   </div>
 </nav>
 
-<!-- TODO: add address/ens search functionality for whatever leaderboard is being displayed -->
-
 <style>
   nav {
     display: flex;
@@ -63,5 +61,11 @@
 
   #nav-links > a:not(.active):hover {
     color: var(--pt-purple-300);
+  }
+
+  @media (width > 860px) {
+    nav {
+      padding: 1rem 5rem;
+    }
   }
 </style>

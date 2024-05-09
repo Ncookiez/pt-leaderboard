@@ -156,8 +156,9 @@
 
   #top-header {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
+    margin-bottom: 0.5rem;
   }
 
   h1 {
@@ -245,5 +246,13 @@
   span#failed-search {
     text-align: center;
     font-size: 0.9em;
+  }
+
+  @media (width > 860px) {
+    #top-header {
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 0;
+    }
   }
 </style>

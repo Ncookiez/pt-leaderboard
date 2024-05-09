@@ -9,6 +9,11 @@
 </span>
 
 <style>
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   a {
     font-family: monospace, monospace;
   }

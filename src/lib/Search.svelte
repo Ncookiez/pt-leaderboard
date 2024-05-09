@@ -21,6 +21,7 @@
     flex-shrink: 1;
     position: relative;
     align-items: center;
+    outline: 2px solid var(--pt-purple-700);
     border-radius: 0.3rem;
     overflow: hidden;
     isolation: isolate;
@@ -40,6 +41,7 @@
   }
 
   input {
+    width: 100%;
     padding: var(--input-y-padding) var(--input-x-padding);
   }
 
@@ -53,5 +55,11 @@
     color: var(--pt-purple-900);
     pointer-events: none;
     z-index: 1;
+  }
+
+  @media (width > 860px) {
+    input {
+      width: auto;
+    }
   }
 </style>
