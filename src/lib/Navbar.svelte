@@ -17,9 +17,6 @@
         <a {href} class:active={route === href}>{name}</a>
       {/each}
     </div>
-    <a href="https://pooltogether.com/interfaces" target="_blank" id="pt-button">
-      Use PoolTogether
-    </a>
   </div>
 </nav>
 
@@ -30,7 +27,7 @@
     display: flex;
     justify-content: center;
     padding: 1rem;
-    background-color: inherit;
+    background-color: var(--pt-bg-purple-darker);
     border-bottom: solid 2px var(--pt-purple-700);
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
     z-index: 50;
@@ -66,19 +63,5 @@
 
   #nav-links > a:not(.active):hover {
     color: var(--pt-purple-300);
-  }
-
-  #pt-button {
-    padding: 0.75rem 1rem;
-    color: var(--pt-purple-800);
-    background-color: var(--pt-teal-light);
-    font-size: 0.9em;
-    font-weight: 500;
-    border: 1px solid var(--pt-teal-light);
-    border-radius: 0.5rem;
-  }
-
-  #pt-button:hover {
-    background-color: var(--pt-teal-dark);
   }
 </style>

@@ -10,4 +10,5 @@
 
 <Leaderboard network={10} />
 
+<!-- TODO: if lower that a screen height, show icon to scroll back up -->
 <!-- TODO: add more leaderboards (prizes won, for example) -->

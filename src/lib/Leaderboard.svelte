@@ -55,7 +55,7 @@
   })
 </script>
 
-<!-- TODO: somehow show points gained since last update -->
+<!-- TODO: somehow show points gained since last update (on hover show +500, etc.) -->
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
@@ -174,12 +174,12 @@
     border-radius: 0.5rem;
   }
 
-  #podium {
-    font-size: 1.1em;
-  }
-
   div.row {
     position: relative;
+  }
+
+  div.row > span.user {
+    font-family: monospace, monospace;
   }
 
   div.row > span.points {
