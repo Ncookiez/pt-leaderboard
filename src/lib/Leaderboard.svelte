@@ -1,9 +1,10 @@
 <script lang="ts">
+  import LeaderboardPoints from './LeaderboardPoints.svelte'
+  import Loading from './Loading.svelte'
+  import { userOdds } from './stores'
   import { getTime } from './utils'
   import { onMount } from 'svelte'
   import type { Address } from './types'
-  import { userOdds } from './stores'
-  import Loading from './Loading.svelte'
 
   type Users = [Lowercase<Address>, number][]
 
@@ -18,8 +19,12 @@
   $: rawUsers = !!data ? Object.entries(data) : []
   $: oldRawUsers = !!oldData ? Object.entries(oldData) : []
 
-  $: formattedUsers = rawUsers.map((data) => [data[0], Math.floor(data[1] * 1e6)]) as Users
-  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], Math.floor(data[1] * 1e6)]) as Users
+  const formatPoints = (rawPoints: number) => {
+    return Math.floor(rawPoints * 1e6)
+  }
+
+  $: formattedUsers = rawUsers.map((data) => [data[0], formatPoints(data[1])]) as Users
+  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], formatPoints(data[1])]) as Users
 
   $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1])
   $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1])
@@ -57,7 +62,6 @@
 </script>
 
 <!-- TODO: on click, go to cabana account page -->
-<!-- TODO: somehow show points gained since last update (on hover show +500, etc.) -->
 <!-- TODO: ens name resolution -->
 <!-- TODO: ens avatar resolution -->
 <!-- TODO: fallback blocky avatars -->
@@ -76,6 +80,7 @@
         {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
           {@const rank = i + 1}
           {@const oldRank = oldRanks[userAddress]}
+          {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
           <div
             class="row grid"
             class:gold={rank === 1}
@@ -84,7 +89,7 @@
           >
             <span class="rank">#{rank}</span>
             <span class="user">{userAddress}</span>
-            <span class="points">{points.toLocaleString('en')}</span>
+            <LeaderboardPoints {points} {oldPoints} />
             {#if !!oldData}
               {#if !oldRank || rank < oldRank}
                 <i class="icofont-rounded-up" />
@@ -100,10 +105,11 @@
           {#if points > 0}
             {@const rank = i + 4}
             {@const oldRank = oldRanks[userAddress]}
+            {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
             <div class="row grid">
               <span class="rank">#{rank}</span>
               <span class="user">{userAddress}</span>
-              <span class="points">{points.toLocaleString('en')}</span>
+              <LeaderboardPoints {points} {oldPoints} />
               {#if !!oldData}
                 {#if !oldRank || rank < oldRank}
                   <i class="icofont-rounded-up" />
@@ -184,11 +190,6 @@
 
   div.row > span.user {
     font-family: monospace, monospace;
-  }
-
-  div.row > span.points {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
   }
 
   div.row.gold,
