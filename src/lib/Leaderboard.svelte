@@ -1,33 +1,29 @@
 <script lang="ts">
-  import { searchInput, userOdds } from '$lib/stores'
+  import LeaderboardValue from '$lib/LeaderboardValue.svelte'
   import UserAddress from '$lib/UserAddress.svelte'
   import RankUpdate from '$lib/RankUpdate.svelte'
+  import { searchInput } from '$lib/stores'
   import Loading from '$lib/Loading.svelte'
   import Search from '$lib/Search.svelte'
-  import Points from './Points.svelte'
   import { getTime } from '$lib/utils'
   import { onMount } from 'svelte'
-  import type { Address } from '../types'
+  import type { Address, ApiResponse } from '$lib/types'
 
   type Users = [Lowercase<Address>, number][]
 
-  export let network: number
+  export let name: string
+  export let data: ApiResponse['data']
+  export let metadata: ApiResponse['metadata']
+  export let oldData: ApiResponse['data']
+  export let formatData: (n: number) => number = (n) => n
   let timeNow = getTime()
   let shownUsers = 20
-
-  $: data = $userOdds?.[network]?.current.data
-  $: metadata = $userOdds?.[network]?.current.metadata
-  $: oldData = $userOdds?.[network]?.old.data
 
   $: rawUsers = !!data ? Object.entries(data) : []
   $: oldRawUsers = !!oldData ? Object.entries(oldData) : []
 
-  const formatPoints = (rawPoints: number) => {
-    return Math.floor(rawPoints * 1e6)
-  }
-
-  $: formattedUsers = rawUsers.map((data) => [data[0], formatPoints(data[1])]) as Users
-  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], formatPoints(data[1])]) as Users
+  $: formattedUsers = rawUsers.map((data) => [data[0], formatData(data[1])]) as Users
+  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], formatData(data[1])]) as Users
 
   $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1])
   $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1])
@@ -78,7 +74,7 @@
 
 <section>
   <div id="top-header">
-    <h1>Points Leaderboard</h1>
+    <h1>{name} Leaderboard</h1>
     {#if !!data}
       <Search />
     {/if}
@@ -89,14 +85,14 @@
       <div id="headers" class="grid">
         <span class="rank">Rank</span>
         <span class="user">User</span>
-        <span class="points">Points</span>
+        <span class="data">{name}</span>
       </div>
       <div id="podium" class="rows">
-        {#each sortedUsers.slice(0, 3) as [userAddress, points], i}
+        {#each sortedUsers.slice(0, 3) as [userAddress, value], i}
           {#if !userSearch || userAddress.includes(userSearch)}
             {@const rank = i + 1}
             {@const oldRank = oldRanks[userAddress]}
-            {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
+            {@const oldValue = formatData(oldData?.[userAddress] ?? 0)}
             <div
               class="row grid"
               class:gold={rank === 1}
@@ -105,7 +101,7 @@
             >
               <span class="rank">#{rank}</span>
               <UserAddress {userAddress} />
-              <Points {points} {oldPoints} />
+              <LeaderboardValue {value} {oldValue} />
               {#if !!oldData}
                 <RankUpdate {rank} {oldRank} />
               {/if}
@@ -115,16 +111,16 @@
       </div>
       {#if !userSearch || !maxRankSearchResults || maxRankSearchResults >= 3}
         <div class="rows">
-          {#each sortedUsers.slice(3, !!userSearch ? maxRankSearchResults : shownUsers) as [userAddress, points], i}
+          {#each sortedUsers.slice(3, !!userSearch ? maxRankSearchResults : shownUsers) as [userAddress, value], i}
             {#if !userSearch || userAddress.includes(userSearch)}
-              {#if points > 0}
+              {#if value > 0}
                 {@const rank = i + 4}
                 {@const oldRank = oldRanks[userAddress]}
-                {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
+                {@const oldValue = formatData(oldData?.[userAddress] ?? 0)}
                 <div class="row grid">
                   <span class="rank">#{rank}</span>
                   <UserAddress {userAddress} />
-                  <Points {points} {oldPoints} />
+                  <LeaderboardValue {value} {oldValue} />
                   {#if !!oldData}
                     <RankUpdate {rank} {oldRank} />
                   {/if}
@@ -133,7 +129,7 @@
             {/if}
           {/each}
           {#if !userSearch && shownUsers < sortedUsers.length}
-            <button id="show-more" on:click={() => (shownUsers += 20)}>show more</button>
+            <button id="show-more" on:click={() => (shownUsers += 50)}>show more</button>
           {/if}
           {#if !!userSearch && !maxRankSearchResults}
             <span id="failed-search">no users found based on your search</span>
@@ -189,7 +185,7 @@
     font-weight: 600;
   }
 
-  #headers > span.points {
+  #headers > span.data {
     text-align: right;
   }
 

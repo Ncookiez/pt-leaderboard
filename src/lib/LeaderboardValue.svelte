@@ -1,18 +1,18 @@
 <script lang="ts">
   import Tooltip from '$lib/Tooltip.svelte'
 
-  export let points: number
-  export let oldPoints: number
+  export let value: number
+  export let oldValue: number
 </script>
 
 <div>
   <Tooltip>
-    {points.toLocaleString('en')}
+    {value.toLocaleString('en')}
     <span slot="tooltip">
-      {#if points > oldPoints}
-        <span class="positive">+{(points - oldPoints).toLocaleString('en')}</span>
-      {:else if oldPoints > points}
-        <span class="negative">-{(oldPoints - points).toLocaleString('en')}</span>
+      {#if value > oldValue}
+        <span class="positive">+{(value - oldValue).toLocaleString('en')}</span>
+      {:else if oldValue > value}
+        <span class="negative">-{(oldValue - value).toLocaleString('en')}</span>
       {:else}
         <span>No changes</span>
       {/if}
