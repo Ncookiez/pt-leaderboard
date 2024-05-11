@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tooltip from './Tooltip.svelte'
+  import Tooltip from '$lib/Tooltip.svelte'
 
   export let points: number
   export let oldPoints: number

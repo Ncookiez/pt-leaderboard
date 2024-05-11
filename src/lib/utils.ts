@@ -1,5 +1,5 @@
-import { networks, userDataApiUrl } from './config'
-import type { ApiResponse } from './types'
+import { networks, userDataApiUrl } from '$lib/config'
+import type { ApiResponse } from '$lib/types'
 
 export const getUserOdds = async () => {
   const data: { [network: number]: { current: ApiResponse; old: ApiResponse } } = {}

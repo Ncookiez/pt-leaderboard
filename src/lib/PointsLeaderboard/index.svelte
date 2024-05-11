@@ -1,13 +1,13 @@
 <script lang="ts">
-  import LeaderboardRankUpdate from './LeaderboardRankUpdate.svelte'
-  import LeaderboardPoints from './LeaderboardPoints.svelte'
-  import LeaderboardUser from './LeaderboardUser.svelte'
-  import Loading from './Loading.svelte'
-  import { searchInput, userOdds } from './stores'
-  import { getTime } from './utils'
+  import { searchInput, userOdds } from '$lib/stores'
+  import UserAddress from '$lib/UserAddress.svelte'
+  import RankUpdate from '$lib/RankUpdate.svelte'
+  import Loading from '$lib/Loading.svelte'
+  import Search from '$lib/Search.svelte'
+  import Points from './Points.svelte'
+  import { getTime } from '$lib/utils'
   import { onMount } from 'svelte'
-  import type { Address } from './types'
-  import Search from './Search.svelte'
+  import type { Address } from '../types'
 
   type Users = [Lowercase<Address>, number][]
 
@@ -104,10 +104,10 @@
               class:bronze={rank === 3}
             >
               <span class="rank">#{rank}</span>
-              <LeaderboardUser {userAddress} />
-              <LeaderboardPoints {points} {oldPoints} />
+              <UserAddress {userAddress} />
+              <Points {points} {oldPoints} />
               {#if !!oldData}
-                <LeaderboardRankUpdate {rank} {oldRank} />
+                <RankUpdate {rank} {oldRank} />
               {/if}
             </div>
           {/if}
@@ -123,10 +123,10 @@
                 {@const oldPoints = formatPoints(oldData?.[userAddress] ?? 0)}
                 <div class="row grid">
                   <span class="rank">#{rank}</span>
-                  <LeaderboardUser {userAddress} />
-                  <LeaderboardPoints {points} {oldPoints} />
+                  <UserAddress {userAddress} />
+                  <Points {points} {oldPoints} />
                   {#if !!oldData}
-                    <LeaderboardRankUpdate {rank} {oldRank} />
+                    <RankUpdate {rank} {oldRank} />
                   {/if}
                 </div>
               {/if}

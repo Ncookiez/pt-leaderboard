@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { searchInput } from './stores'
+  import { searchInput } from '$lib/stores'
 </script>
 
 <div>

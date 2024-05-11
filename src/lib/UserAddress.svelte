@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Address } from './types'
+  import type { Address } from '$lib/types'
 
   export let userAddress: Address
 </script>
