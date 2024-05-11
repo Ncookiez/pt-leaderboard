@@ -7,7 +7,7 @@
       understand manner.
     </p>
     <p>
-      These points are calculated by calculating user percentages of <a
+      The points in the points leaderboard are calculated through user percentages of <a
         href="https://dev.pooltogether.com/protocol/design/twab-controller"
         target="_blank">prize vault TWABs</a
       >, and each vault's percentage contribution to the PoolTogether prize pool. This means they
@@ -15,7 +15,7 @@
       win. A user with a longer-lasting or higher yield deposit can have better odds than another
       user with a larger deposit.
     </p>
-    <p>This data is currently updated every 24 hours.</p>
+    <p>All leaderboards are currently updated every 24 hours.</p>
   </div>
 </section>
 
