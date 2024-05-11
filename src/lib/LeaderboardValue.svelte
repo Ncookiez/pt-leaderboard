@@ -3,16 +3,17 @@
 
   export let value: number
   export let oldValue: number
+  export let formatData: (n: number) => string
 </script>
 
 <div>
   <Tooltip>
-    {value.toLocaleString('en')}
+    {formatData(value)}
     <span slot="tooltip">
       {#if value > oldValue}
-        <span class="positive">+{(value - oldValue).toLocaleString('en')}</span>
+        <span class="positive">+{formatData(value - oldValue)}</span>
       {:else if oldValue > value}
-        <span class="negative">-{(oldValue - value).toLocaleString('en')}</span>
+        <span class="negative">-{formatData(oldValue - value)}</span>
       {:else}
         <span>No changes</span>
       {/if}

@@ -12,18 +12,20 @@
   type Users = [Lowercase<Address>, number][]
 
   export let name: string
+  export let dataName: string = name
   export let data: ApiResponse['data']
   export let metadata: ApiResponse['metadata']
   export let oldData: ApiResponse['data']
-  export let formatData: (n: number) => number = (n) => n
+  export let parseData: (rawNumber: number) => number = (n) => n
+  export let formatData: (parsedNumber: number) => string = (n) => n.toLocaleString('en')
   let timeNow = getTime()
   let shownUsers = 20
 
   $: rawUsers = !!data ? Object.entries(data) : []
   $: oldRawUsers = !!oldData ? Object.entries(oldData) : []
 
-  $: formattedUsers = rawUsers.map((data) => [data[0], formatData(data[1])]) as Users
-  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], formatData(data[1])]) as Users
+  $: formattedUsers = rawUsers.map((data) => [data[0], parseData(data[1])]) as Users
+  $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], parseData(data[1])]) as Users
 
   $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1])
   $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1])
@@ -85,14 +87,14 @@
       <div id="headers" class="grid">
         <span class="rank">Rank</span>
         <span class="user">User</span>
-        <span class="data">{name}</span>
+        <span class="data">{dataName}</span>
       </div>
       <div id="podium" class="rows">
         {#each sortedUsers.slice(0, 3) as [userAddress, value], i}
           {#if !userSearch || userAddress.includes(userSearch)}
             {@const rank = i + 1}
             {@const oldRank = oldRanks[userAddress]}
-            {@const oldValue = formatData(oldData?.[userAddress] ?? 0)}
+            {@const oldValue = parseData(oldData?.[userAddress] ?? 0)}
             <div
               class="row grid"
               class:gold={rank === 1}
@@ -101,7 +103,7 @@
             >
               <span class="rank">#{rank}</span>
               <UserAddress {userAddress} />
-              <LeaderboardValue {value} {oldValue} />
+              <LeaderboardValue {value} {oldValue} {formatData} />
               {#if !!oldData}
                 <RankUpdate {rank} {oldRank} />
               {/if}
@@ -116,11 +118,11 @@
               {#if value > 0}
                 {@const rank = i + 4}
                 {@const oldRank = oldRanks[userAddress]}
-                {@const oldValue = formatData(oldData?.[userAddress] ?? 0)}
+                {@const oldValue = parseData(oldData?.[userAddress] ?? 0)}
                 <div class="row grid">
                   <span class="rank">#{rank}</span>
                   <UserAddress {userAddress} />
-                  <LeaderboardValue {value} {oldValue} />
+                  <LeaderboardValue {value} {oldValue} {formatData} />
                   {#if !!oldData}
                     <RankUpdate {rank} {oldRank} />
                   {/if}

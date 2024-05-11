@@ -5,6 +5,7 @@
 
   const navLinks: { href: string; name: string }[] = [
     { href: '/', name: 'Points' },
+    { href: '/prizes', name: 'Prizes' },
     { href: '/about', name: 'About' }
   ]
 </script>

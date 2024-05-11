@@ -5,14 +5,6 @@
   import { userOdds } from '$lib/stores'
 
   const network = 10
-
-  $: data = $userOdds?.[network]?.current.data
-  $: metadata = $userOdds?.[network]?.current.metadata
-  $: oldData = $userOdds?.[network]?.old.data
-
-  const formatPoints = (rawPoints: number) => {
-    return Math.floor(rawPoints * 1e6)
-  }
 </script>
 
 <svelte:head>
@@ -20,5 +12,12 @@
   <meta name="description" content={defaultMetaDescription} />
 </svelte:head>
 
-<Leaderboard name="Points" {data} {metadata} {oldData} formatData={formatPoints} />
+<Leaderboard
+  name="Points"
+  data={$userOdds?.[network]?.current.data}
+  metadata={$userOdds?.[network]?.current.metadata}
+  oldData={$userOdds?.[network]?.old.data}
+  parseData={(rawPoints) => Math.floor(rawPoints * 1e6)}
+/>
+
 <ScrollUpPrompt />
