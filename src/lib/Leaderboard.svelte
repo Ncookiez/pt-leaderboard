@@ -13,9 +13,9 @@
 
   export let name: string
   export let dataName: string = name
-  export let data: ApiResponse['data']
-  export let metadata: ApiResponse['metadata']
-  export let oldData: ApiResponse['data']
+  export let data: ApiResponse['data'] | undefined
+  export let metadata: ApiResponse['metadata'] | undefined
+  export let oldData: ApiResponse['data'] | undefined
   export let parseData: (rawNumber: number) => number = (n) => n
   export let formatData: (parsedNumber: number) => string = (n) => n.toLocaleString('en')
   let timeNow = getTime()
@@ -27,8 +27,8 @@
   $: formattedUsers = rawUsers.map((data) => [data[0], parseData(data[1])]) as Users
   $: oldFormattedUsers = oldRawUsers.map((data) => [data[0], parseData(data[1])]) as Users
 
-  $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1])
-  $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1])
+  $: sortedUsers = formattedUsers.sort((a, b) => b[1] - a[1]).filter((u) => u[1] > 0)
+  $: oldSortedUsers = oldFormattedUsers.sort((a, b) => b[1] - a[1]).filter((u) => u[1] > 0)
 
   $: lastUpdatedTime = !!metadata ? getTime(metadata.lastUpdated) : 0
   $: updatedMinutesAgo = Math.floor((timeNow - lastUpdatedTime) / 60)
@@ -111,23 +111,21 @@
           {/if}
         {/each}
       </div>
-      {#if !userSearch || !maxRankSearchResults || maxRankSearchResults >= 3}
+      {#if !userSearch || !maxRankSearchResults || maxRankSearchResults > 3}
         <div class="rows">
           {#each sortedUsers.slice(3, !!userSearch ? maxRankSearchResults : shownUsers) as [userAddress, value], i}
             {#if !userSearch || userAddress.includes(userSearch)}
-              {#if value > 0}
-                {@const rank = i + 4}
-                {@const oldRank = oldRanks[userAddress]}
-                {@const oldValue = parseData(oldData?.[userAddress] ?? 0)}
-                <div class="row grid">
-                  <span class="rank">#{rank}</span>
-                  <UserAddress {userAddress} />
-                  <LeaderboardValue {value} {oldValue} {formatData} />
-                  {#if !!oldData}
-                    <RankUpdate {rank} {oldRank} />
-                  {/if}
-                </div>
-              {/if}
+              {@const rank = i + 4}
+              {@const oldRank = oldRanks[userAddress]}
+              {@const oldValue = parseData(oldData?.[userAddress] ?? 0)}
+              <div class="row grid">
+                <span class="rank">#{rank}</span>
+                <UserAddress {userAddress} />
+                <LeaderboardValue {value} {oldValue} {formatData} />
+                {#if !!oldData}
+                  <RankUpdate {rank} {oldRank} />
+                {/if}
+              </div>
             {/if}
           {/each}
           {#if !userSearch && shownUsers < sortedUsers.length}
