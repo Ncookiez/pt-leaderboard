@@ -105,7 +105,12 @@
               <UserAddress {userAddress} />
               <LeaderboardValue {value} {oldValue} {formatData} />
               {#if !!oldData}
-                <RankUpdate {rank} {oldRank} />
+                <RankUpdate
+                  {rank}
+                  {oldRank}
+                  --margin-top="0.5rem"
+                  --margin-right="calc(100% + var(--table-x-padding) + 2px)"
+                />
               {/if}
             </div>
           {/if}

@@ -13,7 +13,8 @@
   .icofont-rounded-up,
   .icofont-rounded-down {
     position: absolute;
-    right: calc(100% + (2 * var(--table-x-padding)));
+    top: var(--margin-top, 0);
+    right: var(--margin-right, calc(100% + (2 * var(--table-x-padding))));
     font-size: 1.5em;
   }
 
