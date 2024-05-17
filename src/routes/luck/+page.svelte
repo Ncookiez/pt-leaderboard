@@ -3,10 +3,8 @@
   import ScrollUpPrompt from '$lib/ScrollUpPrompt.svelte'
   import { userOdds, userPrizes } from '$lib/stores'
   import Leaderboard from '$lib/Leaderboard.svelte'
-  import { getMedian, getTime } from '$lib/utils'
+  import { getAggregatedNetworkData, getMedian, getTime } from '$lib/utils'
   import type { Address, ApiResponse } from '$lib/types'
-
-  const network = 10
 
   const calculateLuckData = (odds: ApiResponse, prizes: ApiResponse) => {
     if (!odds || !Object.keys(odds.data).length || !prizes || !Object.keys(prizes.data).length) {
@@ -42,13 +40,17 @@
     return luck
   }
 
-  $: isLoaded = !!$userOdds?.[network] && !!$userPrizes?.[network]
-  $: luckData = isLoaded
-    ? calculateLuckData($userOdds[network].current, $userPrizes[network].current)
-    : undefined
-  $: oldLuckData = isLoaded
-    ? calculateLuckData($userOdds[network].old, $userPrizes[network].old)
-    : undefined
+  $: aggregatedUserOdds = getAggregatedNetworkData($userOdds)
+  $: aggregatedUserPrizes = getAggregatedNetworkData($userPrizes)
+
+  $: luckData =
+    !!aggregatedUserOdds && !!aggregatedUserPrizes
+      ? calculateLuckData(aggregatedUserOdds.current, aggregatedUserPrizes.current)
+      : undefined
+  $: oldLuckData =
+    !!aggregatedUserOdds && !!aggregatedUserPrizes
+      ? calculateLuckData(aggregatedUserOdds.old, aggregatedUserPrizes.old)
+      : undefined
 </script>
 
 <svelte:head>

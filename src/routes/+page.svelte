@@ -1,10 +1,11 @@
 <script lang="ts">
   import { defaultMetaDescription, defaultMetaTitle } from '$lib/config'
   import ScrollUpPrompt from '$lib/ScrollUpPrompt.svelte'
+  import { getAggregatedNetworkData } from '$lib/utils'
   import Leaderboard from '$lib/Leaderboard.svelte'
   import { userOdds } from '$lib/stores'
 
-  const network = 10
+  $: aggregatedData = getAggregatedNetworkData($userOdds)
 </script>
 
 <svelte:head>
@@ -14,9 +15,9 @@
 
 <Leaderboard
   name="Points"
-  data={$userOdds?.[network]?.current.data}
-  metadata={$userOdds?.[network]?.current.metadata}
-  oldData={$userOdds?.[network]?.old.data}
+  data={aggregatedData?.current.data}
+  metadata={aggregatedData?.current.metadata}
+  oldData={aggregatedData?.old.data}
   parseData={(rawPoints) => Math.floor(rawPoints * 1e6)}
 />
 
