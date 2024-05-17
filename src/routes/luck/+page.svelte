@@ -19,8 +19,13 @@
 
     const luck: ApiResponse = { data: {}, metadata: { lastUpdated } }
 
-    const medianPoints = getMedian(Object.values(odds.data))
-    const medianPrizesWon = getMedian(Object.values(prizes.data))
+    const prizesWon = Object.values(prizes.data)
+    const relevantPoints = Object.values(odds.data)
+      .sort((a, b) => b - a)
+      .slice(0, prizesWon.length)
+
+    const medianPoints = getMedian(relevantPoints)
+    const medianPrizesWon = getMedian(prizesWon)
 
     Object.entries(odds.data).forEach(([_userAddress, points]) => {
       const userAddress = _userAddress as Lowercase<Address>
