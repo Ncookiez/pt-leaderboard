@@ -1,4 +1,4 @@
-import { networks, userDataApiUrl } from '$lib/config'
+import { ignoredAddresses, networks, userDataApiUrl } from '$lib/config'
 import type { Address, ApiResponse } from '$lib/types'
 
 export const getUserOdds = async () => {
@@ -14,7 +14,10 @@ export const getUserOdds = async () => {
         const old: ApiResponse = await _old.json()
 
         if (!!current.data && !!old.data) {
-          data[network] = { current, old }
+          data[network] = {
+            current: { data: getFilteredData(current.data), metadata: current.metadata },
+            old: { data: getFilteredData(old.data), metadata: old.metadata }
+          }
         }
       })()
     )
@@ -36,7 +39,10 @@ export const getUserPrizes = async () => {
         const old: ApiResponse = await _old.json()
 
         if (!!current.data && !!old.data) {
-          data[network] = { current, old }
+          data[network] = {
+            current: { data: getFilteredData(current.data), metadata: current.metadata },
+            old: { data: getFilteredData(old.data), metadata: old.metadata }
+          }
         }
       })()
     )
@@ -122,4 +128,15 @@ export const getMedian = (values: number[]) => {
   return sortedValues.length % 2
     ? sortedValues[middleIndex]
     : (sortedValues[middleIndex - 1] + sortedValues[middleIndex]) / 2
+}
+
+const getFilteredData = (data: ApiResponse['data']) => {
+  const filteredData: ApiResponse['data'] = {}
+
+  Object.entries(data).forEach(([k, v]) => {
+    const address = k as Lowercase<Address>
+    if (!ignoredAddresses.includes(address)) filteredData[address] = v
+  })
+
+  return filteredData
 }
