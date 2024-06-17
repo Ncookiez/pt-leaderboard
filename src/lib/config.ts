@@ -1,8 +1,12 @@
 import type { Address } from './types'
 
-export const userDataApiUrl: `https://${string}` = 'https://pt-odds-api.ncookie.workers.dev'
+export const networks = [10, 8453, 42161] as const
 
-export const networks: number[] = [10, 8453, 42161]
+export const userDataApiUrls = {
+  10: 'https://optimism-pt-odds-api.ncookie.workers.dev',
+  8453: 'https://base-pt-odds-api.ncookie.workers.dev',
+  42161: 'https://arbitrum-pt-odds-api.ncookie.workers.dev'
+} as const satisfies Record<(typeof networks)[number], `https://${string}`>
 
 export const defaultMetaTitle = 'PT Leaderboard'
 export const defaultMetaDescription = `Lure them in with points, and they won't realize they're saving money responsibly.`

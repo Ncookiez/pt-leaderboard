@@ -1,4 +1,4 @@
-import { ignoredAddresses, networks, userDataApiUrl } from '$lib/config'
+import { ignoredAddresses, networks, userDataApiUrls } from '$lib/config'
 import type { Address, ApiResponse } from '$lib/types'
 
 export const getUserOdds = async () => {
@@ -7,8 +7,8 @@ export const getUserOdds = async () => {
   await Promise.allSettled(
     networks.map((network) =>
       (async () => {
-        const _current = await fetch(`${userDataApiUrl}/${network}`)
-        const _old = await fetch(`${userDataApiUrl}/${network}/old`)
+        const _current = await fetch(`${userDataApiUrls[network]}/odds`)
+        const _old = await fetch(`${userDataApiUrls[network]}/odds/old`)
 
         const current: ApiResponse = await _current.json()
         const old: ApiResponse = await _old.json()
@@ -32,8 +32,8 @@ export const getUserPrizes = async () => {
   await Promise.allSettled(
     networks.map((network) =>
       (async () => {
-        const _current = await fetch(`${userDataApiUrl}/${network}/prizes`)
-        const _old = await fetch(`${userDataApiUrl}/${network}/prizes/old`)
+        const _current = await fetch(`${userDataApiUrls[network]}/prizes`)
+        const _old = await fetch(`${userDataApiUrls[network]}/prizes/old`)
 
         const current: ApiResponse = await _current.json()
         const old: ApiResponse = await _old.json()
