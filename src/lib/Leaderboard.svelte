@@ -34,11 +34,7 @@
   $: updatedMinutesAgo = Math.floor((timeNow - lastUpdatedTime) / 60)
   $: updatedHoursAgo = Math.floor(updatedMinutesAgo / 60)
   $: formattedHoursAgo =
-    updatedMinutesAgo > 5
-      ? updatedHoursAgo > 1
-        ? `${updatedHoursAgo} hours ago`
-        : 'Less than an hour ago'
-      : 'Just now'
+    updatedMinutesAgo > 5 ? (updatedHoursAgo > 1 ? `${updatedHoursAgo} hours ago` : 'Less than an hour ago') : 'Just now'
 
   const getRanks = (_sortedUsers: Users) => {
     const ranks: { [user: Lowercase<Address>]: number } = {}
@@ -51,12 +47,8 @@
   $: oldRanks = getRanks(oldSortedUsers)
 
   $: userSearch = $searchInput.trim().toLowerCase()
-  $: searchResults = sortedUsers
-    .map(([u], i) => ({ u, r: i + 1 }))
-    .filter(({ u }) => u.includes(userSearch))
-  $: maxRankSearchResults = !!searchResults.length
-    ? searchResults[searchResults.length - 1].r
-    : undefined
+  $: searchResults = sortedUsers.map(([u], i) => ({ u, r: i + 1 })).filter(({ u }) => u.includes(userSearch))
+  $: maxRankSearchResults = !!searchResults.length ? searchResults[searchResults.length - 1].r : undefined
 
   onMount(() => {
     const interval = setInterval(
@@ -95,22 +87,12 @@
             {@const rank = i + 1}
             {@const oldRank = oldRanks[userAddress]}
             {@const oldValue = parseData(oldData?.[userAddress] ?? 0)}
-            <div
-              class="row grid"
-              class:gold={rank === 1}
-              class:silver={rank === 2}
-              class:bronze={rank === 3}
-            >
+            <div class="row grid" class:gold={rank === 1} class:silver={rank === 2} class:bronze={rank === 3}>
               <span class="rank">#{rank}</span>
               <UserAddress {userAddress} />
               <LeaderboardValue {value} {oldValue} {formatData} />
               {#if !!oldData}
-                <RankUpdate
-                  {rank}
-                  {oldRank}
-                  --margin-top="0.5rem"
-                  --margin-right="calc(100% + var(--table-x-padding) + 2px)"
-                />
+                <RankUpdate {rank} {oldRank} --margin-top="0.5rem" --margin-right="calc(100% + var(--table-x-padding) + 2px)" />
               {/if}
             </div>
           {/if}

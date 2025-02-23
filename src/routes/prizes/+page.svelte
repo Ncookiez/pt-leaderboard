@@ -19,7 +19,6 @@
   data={aggregatedData?.current.data}
   metadata={aggregatedData?.current.metadata}
   oldData={aggregatedData?.old.data}
-  formatData={(amount) =>
-    amount.toLocaleString('en', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
+  formatData={(amount) => amount.toLocaleString('en', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
 />
 <ScrollUpPrompt />

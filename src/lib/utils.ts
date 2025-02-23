@@ -51,9 +51,7 @@ export const getUserPrizes = async () => {
   return data
 }
 
-export const getAggregatedNetworkData = (data: {
-  [network: number]: { current: ApiResponse; old: ApiResponse }
-}) => {
+export const getAggregatedNetworkData = (data: { [network: number]: { current: ApiResponse; old: ApiResponse } }) => {
   if (!data || Object.keys(data).length === 0) return undefined
 
   const currentLastUpdated = Object.values(data).reduce((a, b) =>
@@ -113,9 +111,7 @@ export const getAggregatedNetworkData = (data: {
 }
 
 export const getTime = (date?: string) => {
-  return !!date
-    ? Math.floor(new Date(date).getTime() / 1000)
-    : Math.floor(new Date().getTime() / 1000)
+  return !!date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(new Date().getTime() / 1000)
 }
 
 export const getMedian = (values: number[]) => {
@@ -125,9 +121,7 @@ export const getMedian = (values: number[]) => {
 
   const middleIndex = Math.floor(sortedValues.length / 2)
 
-  return sortedValues.length % 2
-    ? sortedValues[middleIndex]
-    : (sortedValues[middleIndex - 1] + sortedValues[middleIndex]) / 2
+  return sortedValues.length % 2 ? sortedValues[middleIndex] : (sortedValues[middleIndex - 1] + sortedValues[middleIndex]) / 2
 }
 
 const getFilteredData = (data: ApiResponse['data']) => {

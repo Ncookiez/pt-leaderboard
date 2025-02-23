@@ -11,9 +11,7 @@
       return undefined
     }
 
-    const lastUpdated = new Date(
-      Math.max(getTime(odds.metadata.lastUpdated), getTime(prizes.metadata.lastUpdated)) * 1_000
-    ).toUTCString()
+    const lastUpdated = new Date(Math.max(getTime(odds.metadata.lastUpdated), getTime(prizes.metadata.lastUpdated)) * 1_000).toUTCString()
 
     const luck: ApiResponse = { data: {}, metadata: { lastUpdated } }
 
@@ -44,13 +42,9 @@
   $: aggregatedUserPrizes = getAggregatedNetworkData($userPrizes)
 
   $: luckData =
-    !!aggregatedUserOdds && !!aggregatedUserPrizes
-      ? calculateLuckData(aggregatedUserOdds.current, aggregatedUserPrizes.current)
-      : undefined
+    !!aggregatedUserOdds && !!aggregatedUserPrizes ? calculateLuckData(aggregatedUserOdds.current, aggregatedUserPrizes.current) : undefined
   $: oldLuckData =
-    !!aggregatedUserOdds && !!aggregatedUserPrizes
-      ? calculateLuckData(aggregatedUserOdds.old, aggregatedUserPrizes.old)
-      : undefined
+    !!aggregatedUserOdds && !!aggregatedUserPrizes ? calculateLuckData(aggregatedUserOdds.old, aggregatedUserPrizes.old) : undefined
 </script>
 
 <svelte:head>

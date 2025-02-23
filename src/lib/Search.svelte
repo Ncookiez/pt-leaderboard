@@ -3,12 +3,7 @@
 </script>
 
 <div>
-  <input
-    type="text"
-    bind:value={$searchInput}
-    on:blur={() => ($searchInput = $searchInput.trim())}
-    placeholder="Search for a user..."
-  />
+  <input type="text" bind:value={$searchInput} on:blur={() => ($searchInput = $searchInput.trim())} placeholder="Search for a user..." />
   <i class="icofont-search-2" />
 </div>
 
@@ -32,11 +27,7 @@
     position: absolute;
     inset: var(--input-y-padding) 0 var(--input-y-padding) calc(100% - 3em - var(--input-x-padding));
     background-color: var(--pt-purple-50);
-    mask-image: linear-gradient(
-      to left,
-      rgba(0, 0, 0, 1) calc(1em + 2 * var(--input-x-padding)),
-      rgba(0, 0, 0, 0) 100%
-    );
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) calc(1em + 2 * var(--input-x-padding)), rgba(0, 0, 0, 0) 100%);
     pointer-events: none;
   }
 
