@@ -11,7 +11,7 @@
       larger deposit.
     </p>
     <p>
-      <strong>Prizes</strong> in the prizes leaderboard are simply the amount in ETH a given user has won as prizes.
+      <strong>Prizes</strong> in the prizes leaderboard are simply the amount a given user has won as prizes (denominated in ETH).
     </p>
     <p>
       <strong>Luck</strong> in the luck leaderboard is calculated through the median deviation of prizes, divided by the median deviation of

@@ -51,7 +51,29 @@ export const getUserPrizes = async () => {
   return data
 }
 
-export const getAggregatedNetworkData = (data: { [network: number]: { current: ApiResponse; old: ApiResponse } }) => {
+export const getPrizeTokenInfo = async () => {
+  const data: { [network: number]: { amount: number; price: number } } = {}
+
+  await Promise.allSettled(
+    networks.map((network) =>
+      (async () => {
+        const apiResponse = await fetch(`https://app.cabana.fi/api/prizes/${network}`)
+        const parsedApiResponse: { prizeAsset: { amount: number; price: number } } = await apiResponse.json()
+
+        if (!!parsedApiResponse.prizeAsset.amount && !!parsedApiResponse.prizeAsset.price) {
+          data[network] = parsedApiResponse.prizeAsset
+        }
+      })()
+    )
+  )
+
+  return data
+}
+
+export const getAggregatedNetworkData = (
+  data: { [network: number]: { current: ApiResponse; old: ApiResponse } },
+  options?: { networkMultipliers?: { [network: number]: number } }
+) => {
   if (!data || Object.keys(data).length === 0) return undefined
 
   const currentLastUpdated = Object.values(data).reduce((a, b) =>
@@ -71,14 +93,17 @@ export const getAggregatedNetworkData = (data: { [network: number]: { current: A
     old: { [userAddress: Lowercase<Address>]: number[] }
   } = { current: {}, old: {} }
 
-  Object.values(data).forEach((networkData) => {
+  Object.keys(data).forEach((strNetwork) => {
+    const network = parseInt(strNetwork)
+    const networkData = data[network]
+
     Object.entries(networkData.current.data).forEach(([_userAddress, userData]) => {
       const userAddress = _userAddress as Lowercase<Address>
 
       if (allUserData.current[userAddress] === undefined) {
-        allUserData.current[userAddress] = [userData]
+        allUserData.current[userAddress] = [userData * (options?.networkMultipliers?.[network] ?? 1)]
       } else {
-        allUserData.current[userAddress].push(userData)
+        allUserData.current[userAddress].push(userData * (options?.networkMultipliers?.[network] ?? 1))
       }
     })
 
@@ -86,9 +111,9 @@ export const getAggregatedNetworkData = (data: { [network: number]: { current: A
       const userAddress = _userAddress as Lowercase<Address>
 
       if (allUserData.old[userAddress] === undefined) {
-        allUserData.old[userAddress] = [userData]
+        allUserData.old[userAddress] = [userData * (options?.networkMultipliers?.[network] ?? 1)]
       } else {
-        allUserData.old[userAddress].push(userData)
+        allUserData.old[userAddress].push(userData * (options?.networkMultipliers?.[network] ?? 1))
       }
     })
   })
@@ -110,11 +135,72 @@ export const getAggregatedNetworkData = (data: { [network: number]: { current: A
   return aggregatedNetworkData
 }
 
+export const calculatePointMultipliers = (info: Awaited<ReturnType<typeof getPrizeTokenInfo>>) => {
+  const multipliers: { [network: number]: number } = {}
+
+  if (!!Object.keys(info).length) {
+    const sumValues = Object.values(info).reduce((a, b) => a + b.amount * b.price, 0)
+    const avgValue = sumValues / Object.keys(info).length
+
+    Object.keys(info).forEach((strNetwork) => {
+      const network = parseInt(strNetwork)
+      multipliers[network] = (info[network].amount * info[network].price) / avgValue
+    })
+  }
+
+  return multipliers
+}
+
+export const calculatePrizeMultipliers = (info: Awaited<ReturnType<typeof getPrizeTokenInfo>>) => {
+  const multipliers: { [network: number]: number } = {}
+
+  if (!!Object.keys(info).length) {
+    Object.keys(info).forEach((strNetwork) => {
+      const network = parseInt(strNetwork)
+      multipliers[network] = info[network].price
+    })
+  }
+
+  return multipliers
+}
+
+export const calculateLuckData = (odds?: ApiResponse, prizes?: ApiResponse) => {
+  if (!odds || !Object.keys(odds.data).length || !prizes || !Object.keys(prizes.data).length) {
+    return undefined
+  }
+
+  const lastUpdated = new Date(Math.max(getTime(odds.metadata.lastUpdated), getTime(prizes.metadata.lastUpdated)) * 1_000).toUTCString()
+
+  const luck: ApiResponse = { data: {}, metadata: { lastUpdated } }
+
+  const prizesWon = Object.values(prizes.data)
+  const relevantPoints = Object.values(odds.data)
+    .sort((a, b) => b - a)
+    .slice(0, prizesWon.length)
+
+  const medianPoints = getMedian(relevantPoints)
+  const medianPrizesWon = getMedian(prizesWon)
+
+  Object.entries(odds.data).forEach(([_userAddress, points]) => {
+    const userAddress = _userAddress as Lowercase<Address>
+    const prizesWon = prizes.data[userAddress] ?? 0
+
+    if (!!points || !!prizesWon) {
+      const prizesWonRatio = prizesWon / medianPrizesWon
+      const pointsRatio = points / medianPoints
+
+      luck.data[userAddress] = (prizesWonRatio / pointsRatio) * 100
+    }
+  })
+
+  return luck
+}
+
 export const getTime = (date?: string) => {
   return !!date ? Math.floor(new Date(date).getTime() / 1000) : Math.floor(new Date().getTime() / 1000)
 }
 
-export const getMedian = (values: number[]) => {
+const getMedian = (values: number[]) => {
   if (values.length === 0) return 0
 
   const sortedValues = [...values].sort((a, b) => a - b)

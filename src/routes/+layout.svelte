@@ -1,17 +1,14 @@
 <script lang="ts">
-  import { getUserOdds, getUserPrizes } from '$lib/utils'
-  import { userOdds, userPrizes } from '$lib/stores'
+  import { getPrizeTokenInfo, getUserOdds, getUserPrizes } from '$lib/utils'
+  import { prizeTokenInfo, userOdds, userPrizes } from '$lib/stores'
   import Navbar from '$lib/Navbar.svelte'
   import { onMount } from 'svelte'
   import '../app.css'
 
   onMount(async () => {
-    if (!$userOdds) {
-      userOdds.set(await getUserOdds())
-    }
-    if (!$userPrizes) {
-      userPrizes.set(await getUserPrizes())
-    }
+    if (!$userOdds) userOdds.set(await getUserOdds())
+    if (!$userPrizes) userPrizes.set(await getUserPrizes())
+    if (!$prizeTokenInfo) prizeTokenInfo.set(await getPrizeTokenInfo())
   })
 </script>
 
